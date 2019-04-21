@@ -20,6 +20,9 @@ var room;
 socket.on('connectToRoom',function(data) {
     console.log("You are in room: "+data)
     room=data;
+    socket.on('roominfo',function(data){
+        socket.emit('roominfo',room)
+    })
 })
 
 $(document).ready(function(){
@@ -36,11 +39,14 @@ $(document).ready(function(){
     socket.on('new message', function(data,room){
         console.log(room)
         $('#list').append("<li>"+data+"</li>");
-        
     })
+
+    
 //run it
 })
 
+
+    
 
 
 
@@ -48,7 +54,6 @@ $(document).ready(function(){
 
 <button id="send">Send </button>
 <input type="text" id="message" placeholder="Message">
-
 
 <ul id='list'></ul>
 
