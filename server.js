@@ -24,15 +24,19 @@ x=1
 function client(socket,x){
       if(x==1 || queue.length==0){
         user++;
-        if(user%2==0){
-            room++;
-            socket.join(room)  
+        if(connections.length%2==0){
+            socket.join(room)
             console.log("abc")
             socket.roomID = room;
+            io.in(room).emit('new message',"Connected")
         }
         else{
+            room++;
             socket.join(room)
+            console.log("def")
             socket.roomID = room;
+            io.in(room).emit('new message',"Connecting")
+
         }
         socket.emit('connectToRoom',room)
     }
@@ -42,6 +46,7 @@ function client(socket,x){
             socket.join(roomID)
             console.log(roomID)
             socket.emit('connectToRoom',roomID)
+            io.in(room).emit('new message',"Connected")
             x=1;
         }
     }
@@ -66,6 +71,7 @@ io.on('connection', function(socket){
         x=0;
         console.log("hhhhhh")
         user--;
+        io.in(roomID).emit('findnew',roomID)
         //client(socket,x)
                    
         connections.splice(connections.indexOf(socket),1);
