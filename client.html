@@ -34,13 +34,27 @@ $(document).ready(function(){
         socket.emit('send message', msg,room);
         });
 
-//aik min dhaikne de.
     //recieving the msg from server and displaying.
     socket.on('new message', function(data,room){
-        console.log(room)
-        $('#list').append("<li>"+data+"</li>");
+        if(data=="Connected"){
+            $('#para').append("<p>"+data+"</p>");
+        }
+        if(data=="Connecting"){
+            $('#para').append("<p>"+data+"</p>");
+        }
+        else {
+            console.log(room)
+            $("div").empty();
+            $('#list').append("<li>" + data + "</li>");
+        }
     })
 
+    socket.on('findnew',function(data){
+        $("div").empty();
+        $('#list').append("<li>" + "Other Client has disconnected searching for a new one" + "</li>");
+
+
+    })
     
 //run it
 })
@@ -56,6 +70,8 @@ $(document).ready(function(){
 <input type="text" id="message" placeholder="Message">
 
 <ul id='list'></ul>
+<div><p id='para'></p></div>
+
 
 </body>
 </html>
