@@ -4,6 +4,8 @@ var http = require('http').Server(app);
 //creating a socket.
 var io = require('socket.io')(http);
 users = [];
+
+list = [];
 //to keep a check on connected and disconnected users.
 connections = [];
 
@@ -53,6 +55,9 @@ function client(socket,x){
 }
 
 
+
+
+
 //jo kaam hai wo is may hai after connection is established.
 io.on('connection', function(socket){
     
@@ -61,7 +66,28 @@ io.on('connection', function(socket){
     client(socket,x);
     
     
+    socket.on('join',function(data){
+        x=0;
+        console.log(data)
+        list.push(data)
+        io.in(data).emit('findnew',data)
+        if(connections.length%2==0){
+            socket.join(data)
+            console.log("abc")
+            socket.roomID = data;
+            io.in(data).emit('new message',"Connected")
+        }
+        else{
+            room++;
+            socket.join(data)
+            console.log("def")
+            socket.roomID = data;
+            io.in(data).emit('new message',"Connecting")
 
+        }
+        socket.emit('connectToRoom',room)
+
+    })
 
 
     socket.on('disconnect',function(data){

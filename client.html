@@ -55,7 +55,15 @@ $(document).ready(function(){
 
 
     })
-    
+
+    $('#findnew').click(function() {
+        socket.emit('join',room)
+
+
+    })
+
+
+
 //run it
 })
 
@@ -68,6 +76,9 @@ $(document).ready(function(){
 
 <button id="send">Send </button>
 <input type="text" id="message" placeholder="Message">
+
+<button id="findnew">Find New </button>
+
 
 <ul id='list'></ul>
 <div><p id='para'></p></div>
