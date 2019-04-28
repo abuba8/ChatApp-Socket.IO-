@@ -20,11 +20,12 @@ app.get('/', function(req, res) {
 });
 queue =[];
 user=-1;
+var room2;
 room =0;
 var roomID;
 x=1
 function client(socket,x){
-      if(x==1 || queue.length==0){
+    if(x==1 || queue.length==0){
         user++;
         if(connections.length%2==0){
             socket.join(room)
@@ -60,32 +61,24 @@ function client(socket,x){
 
 //jo kaam hai wo is may hai after connection is established.
 io.on('connection', function(socket){
-    
+
     connections.push(socket);
     console.log('Connected: %s sockets connected', connections.length);
     client(socket,x);
-    
-    
+
+
     socket.on('join',function(data){
-        x=0;
-        console.log(data)
-        list.push(data)
-        io.in(data).emit('findnew',data)
-        if(connections.length%2==0){
-            socket.join(data)
-            console.log("abc")
-            socket.roomID = data;
-            io.in(data).emit('new message',"Connected")
+        if(list.includes(room)==true){
+            client(socket,x)
+            list.pop(room)
         }
         else{
-            room++;
-            socket.join(data)
-            console.log("def")
-            socket.roomID = data;
-            io.in(data).emit('new message',"Connecting")
-
+            x=0;
+            list.push(room)
+            io.in(room).emit('findnew',room)
+            socket.leaveAll();
+            client(socket,x)
         }
-        socket.emit('connectToRoom',room)
 
     })
 
@@ -99,20 +92,20 @@ io.on('connection', function(socket){
         user--;
         io.in(roomID).emit('findnew',roomID)
         //client(socket,x)
-                   
+
         connections.splice(connections.indexOf(socket),1);
         console.log('Disconnected: %s sockets connected', connections.length);
-        })
-    
-       
+    })
 
 
-        socket.on('send message',function(data,room){
-            console.log(room);
-            //msg mil gya server ko, then sending back to all the connected clients in the room.
-            io.in(room).emit('new message',data,room); //agar room hata doon tou msg display hojatay hain
-            
-        })    
-    
-       
-    });
+
+
+    socket.on('send message',function(data,room){
+        console.log(room);
+        //msg mil gya server ko, then sending back to all the connected clients in the room.
+        io.in(room).emit('new message',data,room); //agar room hata doon tou msg display hojatay hain
+
+    })
+
+
+});
